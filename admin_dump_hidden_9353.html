@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dump (Hidden)</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div class="container">
+    <h2>Admin Message Dump</h2>
+    <input type="password" id="adminCode" placeholder="Admin Code">
+    <input type="text" id="id1" placeholder="User ID 1">
+    <input type="text" id="id2" placeholder="User ID 2">
+    <input type="datetime-local" id="time1">
+    <input type="datetime-local" id="time2">
+    <button onclick="dumpMessages()">Dump Messages</button>
+
+    <pre id="output"></pre>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    async function dumpMessages() {
+      const code = document.getElementById("adminCode").value;
+      const id1 = document.getElementById("id1").value;
+      const id2 = document.getElementById("id2").value;
+      const time1 = new Date(document.getElementById("time1").value).toISOString();
+      const time2 = new Date(document.getElementById("time2").value).toISOString();
+
+      const { data, error } = await db.rpc("dump_messages", {
+        p_admin_code: code,
+        p_id1: id1,
+        p_id2: id2,
+        p_time1: time1,
+        p_time2: time2
+      });
+
+      if (error) document.getElementById("output").innerText = "Error: " + error.message;
+      else document.getElementById("output").innerText = JSON.stringify(data, null, 2);
+    }
+  </script>
+</body>
+</html>
